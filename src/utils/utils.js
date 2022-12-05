@@ -1,14 +1,38 @@
-export {
-  getMapSize,
-  findTile,
-  showRoom,
-  randi,
-  deltaOfDiri,
-  mapxy,
-  mapmid,
-  fillArray,
-  oneShot,
-  shuffle,
+import React, { useEffect, useRef } from "react";
+export function Canvas({ canvas }) {
+  const container = useRef(null);
+
+  useEffect(() => {
+    container.current.innerHTML = "";
+    container.current.append(canvas);
+  }, [container, canvas]);
+
+  return <div ref={container} />;
+}
+
+const makeTileCanvas = (map, tiles) => {
+  const [w, h] = getMapSize(map);
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  canvas.style.width = "100%";
+  canvas.style.imageRendering = "pixelated";
+  const ctx = canvas.getContext("2d");
+  const id = ctx.createImageData(w, h);
+  const d = id.data;
+
+  for (let y = 0; y < h; y++)
+    for (let x = 0; x < w; x++) {
+      const i = (x + y * w) * 4;
+      const [r, g, b, a] = tiles[map[y][x]] || [0, 0, 0, 0];
+      d[i + 0] = r;
+      d[i + 1] = g;
+      d[i + 2] = b;
+      d[i + 3] = a;
+    }
+
+  ctx.putImageData(id, 0, 0);
+  return canvas;
 };
 
 const getMapSize = (a) => [a[0]?.length, a.length];
@@ -50,3 +74,17 @@ const oneShot = (n, i) =>
     .fill()
     .map((v, ii) => (ii === i ? 1 : 0));
 const shuffle = (a) => a.sort(() => Math.random() - 0.5);
+
+export {
+  makeTileCanvas,
+  getMapSize,
+  findTile,
+  showRoom,
+  randi,
+  deltaOfDiri,
+  mapxy,
+  mapmid,
+  fillArray,
+  oneShot,
+  shuffle,
+};

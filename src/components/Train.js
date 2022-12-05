@@ -2,18 +2,22 @@ import React, { useState, useRef } from "react";
 import train from "../utils/train";
 import makeHouse from "../utils/house";
 import makeCave from "../utils/cave";
-import { showRoom } from "../utils/utils";
+import { Canvas, makeTileCanvas } from "../utils/utils";
+import Slide from "../components/Slide";
+import Button from "react-bootstrap/Button";
 
 export default function Train() {
   const [logs, setlogs] = useState([]);
-  const make = useRef();
+  const [maps, setmaps] = useState([]);
+  const [imgs, setimgs] = useState([]);
   const model = useRef();
 
   const log = (s) => setlogs((logs) => logs.concat(s));
 
   const onClear = () => {
-    make.current = undefined;
     setlogs([]);
+    setimgs([]);
+    setmaps([]);
     if (model.current) {
       model.current.stopTraining = true;
       model.current = undefined;
@@ -22,31 +26,38 @@ export default function Train() {
 
   const onMake = (m) => {
     const [w, h] = [20, 20];
-    onClear();
-    make.current = m;
     const r = m(w, h);
-    showRoom(log, w, h, r);
+    setmaps([...maps, r]);
+    setimgs(
+      imgs.concat(
+        makeTileCanvas(r, [
+          [200, 200, 200, 255],
+          [0, 0, 0, 255],
+        ])
+      )
+    );
   };
 
   const onTrain = () => {
     log("start");
-    model.current = train(log, make.current);
+    model.current = train(log, maps);
   };
 
   return (
     <div>
-      <button onClick={onClear} disabled={!logs.length}>
+      <Button onClick={onClear} disabled={!logs.length && !imgs.length}>
         Clear
-      </button>
-      <button onClick={() => onMake(makeCave)} disabled={model.current}>
+      </Button>
+      <Button onClick={() => onMake(makeCave)} disabled={model.current}>
         Cave
-      </button>
-      <button onClick={() => onMake(makeHouse)} disabled={model.current}>
+      </Button>
+      <Button onClick={() => onMake(makeHouse)} disabled={model.current}>
         House
-      </button>
-      <button onClick={onTrain} disabled={!make.current || model.current}>
+      </Button>
+      <Button onClick={onTrain} disabled={!maps.length || model.current}>
         Train
-      </button>
+      </Button>
+      <Slide slides={imgs.map((img, i) => [<Canvas canvas={img} />, i + 1])} />
       {logs.map((s, i) => (
         <pre key={i}>{s}</pre>
       ))}

@@ -1,7 +1,7 @@
 import Dungeon from "@mikewesthad/dungeon";
-import React, { useState } from "react";
+import React from "react";
 
-export default function (w, h) {
+export default function makeHouse(w, h) {
   return getMappedTiles(make(w, h));
 }
 

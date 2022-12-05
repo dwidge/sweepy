@@ -5,10 +5,11 @@ vacuum robot sim
 # usage
 
 1. Go to Train
-2. Click Train
-3. Wait. Loss decreases.
+2. Add a few Cave/House
+3. Click Train
+4. Wait. Loss decreases
 
-It must say which cave/house it is in just by feeling the walls (allowed movements on grid).
+It must say which cave/house it is in just by feeling the walls / allowed movements on grid.
 
 # license
 

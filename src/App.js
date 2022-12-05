@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Routes, Route, NavLink } from "react-router-dom";
 import { Storage } from "@dwidge/lib-react";
-const { useStorage } = Storage(useState, useEffect);
 
 import View from "./components/View";
 import Train from "./components/Train";
+
+const { useStorage } = Storage(useState, useEffect);
 
 const App = () => {
   const settings = useStorage("sweepy", {});

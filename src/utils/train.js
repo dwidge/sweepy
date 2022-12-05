@@ -14,8 +14,11 @@ import {
   oneShot,
   shuffle,
 } from "./utils";
+//import tf from '@tensorflow/tfjs'
+const tf = window.tf;
 
 function makeEpisode(room, steps = 10) {
+  console.log(room);
   const moves = [];
   const [w, h] = getMapSize(room);
   var [px, py] = findTile(room, 0) || mapmid([w, h]);
@@ -62,7 +65,7 @@ function makeBuffers(episodes, { nMoves, nAnswers }) {
 
   const sequencesBuffer = tf.buffer([nExamples, nMoves, nInputs]);
   const labelsBuffer = tf.buffer([nExamples, nAnswers]);
-  var original = [];
+
   for (let i = 0; i < nExamples; ++i) {
     const { sequence, label } = episodes[i];
     for (let j = 0; j < nMoves; ++j) {
@@ -77,11 +80,11 @@ function makeBuffers(episodes, { nMoves, nAnswers }) {
 function generateDataset(
   show,
   { nHouses = 5, nExamplesPerHouse = 20, w = 20, h = 20, nMoves = 50 },
-  makeHouse
+  houses
 ) {
-  const houses = fillArray(nHouses, (i) => makeHouse(w, h));
+  //const houses = fillArray(nHouses, (i) => makeHouse(w, h));
 
-  houses.map((r) => showRoom(show, w, h, r));
+  //houses.map((r) => showRoom(show, w, h, r));
 
   const episodes = makeEpisodes(houses, { nExamplesPerHouse, nMoves });
   return makeBuffers(episodes, { nMoves, nAnswers: nHouses });
@@ -98,11 +101,11 @@ const fit = (show, model, inputs, outputs) =>
     },
   });
 
-export default function train(show, makeHouse) {
+export default function train(show, maps) {
   const nMoves = 50,
     dirs = 4,
     hiddens = 10,
-    nHouses = 5;
+    nHouses = maps.length;
   var model = tf.sequential();
 
   show("1");
@@ -129,12 +132,8 @@ export default function train(show, makeHouse) {
   });
 
   show("3");
-
-  const [inputs, outputs] = generateDataset(
-    show,
-    { nMoves, nHouses },
-    makeHouse
-  );
+  console.log(maps);
+  const [inputs, outputs] = generateDataset(show, { nMoves, nHouses }, maps);
 
   show("4");
 

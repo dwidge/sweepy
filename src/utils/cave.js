@@ -1,7 +1,6 @@
 import { randi, deltaOfDiri } from "./utils";
 
-export default function (w, h, steps = 50) {
-  console.log(w, h);
+export default function makeCave(w, h, steps = 50) {
   const d = [];
   for (var y = 0; y < h; y++) {
     const row = [];

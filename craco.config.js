@@ -5,6 +5,7 @@ module.exports = {
     configure: (webpackConfig) => {
       webpackConfig.externals = {
         three: "THREE",
+        //'@tensorflow/tfjs': 'tf',
       };
       return webpackConfig;
     },
