@@ -1,0 +1,68 @@
+{
+  "name": "@dwidge/sweepy",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "private": true,
+  "homepage": "/sweepy",
+  "dependencies": {
+    "@craco/craco": "7.0.0-alpha.7",
+    "@dwidge/lib": "github:dwidge/lib",
+    "@dwidge/lib-react": "github:dwidge/lib-react",
+    "@dwidge/table-react": "github:dwidge/table-react",
+    "@mikewesthad/dungeon": "^2.0.1",
+    "@react-three/fiber": "^8.9.1",
+    "prop-types": "^15.8.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.3.0",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.3.0",
+    "@testing-library/user-event": "^13.5.0",
+    "cross-env": "^5.2.1",
+    "eslint": "^8.0.1",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-jsonc": "^2.3.1",
+    "eslint-plugin-n": "^15.0.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-react": "^7.30.0",
+    "jest-environment-jsdom": "^28.1.0"
+  },
+  "scripts": {
+    "start": "cross-env DISABLE_ESLINT_PLUGIN=true craco start",
+    "build": "cross-env BUILD_PATH='./docs' GENERATE_SOURCEMAP=false craco build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "lint": "eslint . --ext .js,.json,.*rc",
+    "commit": "npm run lint -- --fix && npm run test -- --watchAll=false && npm run build && git add . && git commit -m",
+    "push": "npm version patch && git push --follow-tags"
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "\\.(css|less|sass|scss)$": "<rootDir>/mocks/style.js",
+      "\\.(gif|ttf|eot|svg)$": "<rootDir>/mocks/file.js"
+    }
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
