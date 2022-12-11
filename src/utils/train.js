@@ -118,10 +118,13 @@ const fit = (show, model, inputs, outputs) =>
     },
   });
 
-export default function train(show, maps) {
+export default function train(
+  show,
+  maps,
+  { hiddens = 10, learningRate = 0.05 }
+) {
   const nMoves = maps[0].trials[0].length;
   const dirs = 4,
-    hiddens = 10,
     nHouses = maps.length;
   var model = tf.sequential();
 
@@ -136,8 +139,8 @@ export default function train(show, maps) {
     })
   );
 
-  model.add(tf.layers.dense({ units: 10, activation: "linear" }));
-  model.add(tf.layers.dropout(0.5));
+  //model.add(tf.layers.dense({ units: 10, activation: "linear" }));
+  //model.add(tf.layers.dropout(0.5));
 
   model.add(tf.layers.dense({ units: nHouses, activation: "softmax" }));
 
@@ -145,7 +148,7 @@ export default function train(show, maps) {
 
   model.compile({
     loss: "categoricalCrossentropy",
-    optimizer: tf.train.rmsprop(0.1),
+    optimizer: tf.train.rmsprop(learningRate),
   });
 
   show("3");
