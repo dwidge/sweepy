@@ -35,6 +35,35 @@ const makeTileCanvas = (map, tiles) => {
   return canvas;
 };
 
+const lerp = (a, b, t) => a * t + b * (1 - t);
+
+const blend = ([r, g, b], [r2, g2, b2], t) => [
+  lerp(r, r2, t),
+  lerp(g, g2, t),
+  lerp(b, b2, t),
+];
+
+export const drawPathCanvas = (map, steps, canvas, color = [255, 0, 0]) => {
+  const [w, h] = getMapSize(map);
+  const ctx = canvas.getContext("2d");
+  const id = ctx.getImageData(0, 0, w, h);
+  const d = id.data;
+
+  for (let s = 0; s < steps.length; s++) {
+    const a = (s + 1) / steps.length;
+    const [x, y] = steps[s];
+    const i = (x + y * w) * 4;
+    const [r, g, b] = blend(d.slice(i, i + 3), color, a);
+    d[i + 0] = r;
+    d[i + 1] = g;
+    d[i + 2] = b;
+    //d[i + 3] = a;
+  }
+
+  ctx.putImageData(id, 0, 0);
+  return canvas;
+};
+
 const getMapSize = (a) => [a[0]?.length, a.length];
 
 const findTile = (house, tile = 0) => {

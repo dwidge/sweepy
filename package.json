@@ -11,7 +11,6 @@
     "@dwidge/table-react": "github:dwidge/table-react",
     "@mikewesthad/dungeon": "^2.0.1",
     "@react-three/fiber": "^8.9.1",
-    "lx-login": "^0.1.1",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-bootstrap": "^2.5.0",

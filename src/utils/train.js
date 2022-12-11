@@ -15,45 +15,61 @@ import {
   shuffle,
 } from "./utils";
 //import tf from '@tensorflow/tfjs'
-const tf = window.tf;
+const { tf } = window;
 
-function makeEpisode(room, steps = 10) {
-  console.log(room);
-  const moves = [];
-  const [w, h] = getMapSize(room);
-  var [px, py] = findTile(room, 0) || mapmid([w, h]);
-  var dir = randi(4);
-  for (var s = 0; s < steps; s++) {
-    const dirs = [0, 0, 0, 0];
+const pDir = ([px, py], dir) => {
+  const [dx, dy] = deltaOfDiri(dir);
+  return [px + dx, py + dy];
+};
 
-    for (var d = 0; d < 4; d++) {
-      const [dx, dy] = deltaOfDiri(dir);
-      const [nx, ny] = [px + dx, py + dy];
-      const isObstacle = mapxy(room, [w, h], [nx, ny]);
-      if (!isObstacle) {
-        dirs[dir] = 1;
-        [px, py] = [nx, ny];
-        break;
-      }
-      dir = (dir + 1) % 4;
+function getMoveExplore(map, [w, h], [px, py], dir) {
+  var move = [0, 0, 0, 0];
+  var p = [px, py];
+
+  for (var d = 0; d < 4; d++) {
+    dir = (dir + 400) % 4;
+    const np = pDir([px, py], dir);
+    const isObstacle = mapxy(map, [w, h], np);
+    if (!isObstacle) {
+      move[dir] = 1;
+      p = np;
+      break;
     }
-
-    moves.push(dirs);
+    dir++;
   }
+  return { p, dir, move };
+}
+
+export function makeTrial(map, steps = 100) {
+  const moves = [];
+  const [w, h] = getMapSize(map);
+  var p = findTile(map, 0) || mapmid([w, h]);
+  var startdir = randi(4);
+  var dir = startdir;
+
+  for (var s = 0; s < steps; s++) {
+    //dir = randi(4);
+    const m = getMoveExplore(map, [w, h], p, dir);
+    moves.push(m);
+    ({ p, dir } = m);
+    if (dir != startdir) {
+      startdir = -4;
+      dir--;
+    }
+  }
+
   return moves;
 }
 
 function makeEpisodes(houses, { nExamplesPerHouse = 20, nMoves = 30 }) {
   const nAnswers = houses.length;
 
-  const make = (house, i) => ({
-    sequence: makeEpisode(house, nMoves),
+  const make = (i) => (trial) => ({
+    sequence: trial.map(({ move }) => move),
     label: oneShot(nAnswers, i),
   });
   const episodes = shuffle(
-    houses
-      .map((house, i) => fillArray(nExamplesPerHouse, () => make(house, i)))
-      .flat()
+    houses.map(({ map, trials }, i) => trials.map(make(i))).flat()
   );
 
   return episodes;
@@ -79,9 +95,10 @@ function makeBuffers(episodes, { nMoves, nAnswers }) {
 
 function generateDataset(
   show,
-  { nHouses = 5, nExamplesPerHouse = 20, w = 20, h = 20, nMoves = 50 },
+  { nHouses = 5, w = 20, h = 20, nMoves = 50 },
   houses
 ) {
+  const nExamplesPerHouse = houses[0].trials.length;
   //const houses = fillArray(nHouses, (i) => makeHouse(w, h));
 
   //houses.map((r) => showRoom(show, w, h, r));
@@ -102,8 +119,8 @@ const fit = (show, model, inputs, outputs) =>
   });
 
 export default function train(show, maps) {
-  const nMoves = 50,
-    dirs = 4,
+  const nMoves = maps[0].trials[0].length;
+  const dirs = 4,
     hiddens = 10,
     nHouses = maps.length;
   var model = tf.sequential();
