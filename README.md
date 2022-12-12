@@ -4,10 +4,10 @@ vacuum robot sim
 
 # usage
 
-1. Go to Train
+1. Go to Self Localize
 2. Add a few Cave/House
 3. Click Train
-4. Wait. Loss decreases
+4. Wait. Loss may decrease.
 
 It must say which cave/house it is in just by feeling the walls / allowed movements on grid.
 

@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Routes, Route, NavLink } from "react-router-dom";
 import { Storage } from "@dwidge/lib-react";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Navbar from "./components/Navbar";
 
-import View from "./components/View";
-import Train from "./components/Train";
+import About from "./components/About";
+import SelfLocalize from "./components/SelfLocalize";
+import AutoAssociative from "./components/AutoAssociative";
+import View3D from "./components/View3D";
 
 const { useStorage } = Storage(useState, useEffect);
 
@@ -11,28 +17,15 @@ const App = () => {
   const settings = useStorage("sweepy", {});
 
   return (
-    <>
-      <nav>
-        <NavLink
-          className={({ isActive }) => (isActive ? "link-active" : "link")}
-          to="/"
-        >
-          Train
-        </NavLink>
-        <NavLink
-          className={({ isActive }) => (isActive ? "link-active" : "link")}
-          to="/view"
-        >
-          View
-        </NavLink>
-      </nav>
-      <div>
-        <Routes>
-          <Route exact path="/" element={<Train settings={settings} />} />
-          <Route path="/view" element={<View settings={settings} />} />
-        </Routes>
-      </div>
-    </>
+    <Navbar
+      brand="Sweepy"
+      pages={{
+        "/": { exact: true, name: "About", element: <About /> },
+        "/self": { name: "Self Localize", element: <SelfLocalize /> },
+        "/auto": { name: "Auto Associative", element: <AutoAssociative /> },
+        "/view": { name: "View 3D", element: <View3D /> },
+      }}
+    />
   );
 };
 
